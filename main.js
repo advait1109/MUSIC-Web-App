@@ -1,10 +1,14 @@
-song="";
+song1="";
+song2="";
+scoreLeftWrist=0;
+scoreRightWrist=0;
 leftWristX=0;
 leftWristY=0;
 rightWristX=0;
 rightWristY=0;
 function preload(){
-    song=loadSound("music.mp3");
+    song1=loadSound("music.mp3");
+    song2=loadSound("hp.mp3");
 }
 function setup(){
     canvas=createCanvas(600,500);
@@ -16,11 +20,29 @@ function setup(){
 }
 function draw(){
     image(video,0,0,600,500);
-}
-function play(){
-    song.play();
-    song.rate(1);
-    song.setVolume(1);
+
+    if(scoreLeftWrist>0.2){
+        console.log('done');
+        fill("red");
+        color("red");
+        circle(leftWristX,leftWristY,20);
+        if(song1.isPlaying()==false && song2.isPlaying()==false){
+            song1.play();
+        }
+        }
+        if(scoreRightWrist>0.2){
+            fill("red");
+            color("red");
+            circle(rightWristX,rightWristY,20);
+            if(song1.isPlaying()==true){
+                song2.play();
+                song1.pause();
+            }
+            if(song2.isPlaying()==true){
+                song1.play();
+                song2.pause();
+            }
+            }
 }
 function modelLoaded(){
     console.log("MODEL LOADED");
@@ -34,5 +56,8 @@ function gotPoses(results){
         rightWristX=results[0].pose.rightWrist.x;
         rightWristY=results[0].pose.rightWrist.y;
         console.log(rightWristX+" "+rightWristY);
+        scoreLeftWrist=results[0].pose.keypoints[9].score;
+        scoreRightWrist=results[0].pose.keypoints[10].score;
+        console.log(scoreLeftWrist+"         "+scoreRightWrist);
     }
 }
